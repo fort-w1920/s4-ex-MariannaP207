@@ -170,3 +170,99 @@ lynx <- function(
 
 
 ### validation functions
+setValidity("mouse", 
+            method = function(object) {
+  invalids <- character()
+  if (object@name == "") {
+    invalids[1] <- "animals need a 'name'."
+  } 
+  if (object@weight < 0.5 | object@weight > 1) {
+    invalids[2] <- "weight must be in [0.5, 1]."
+  }
+  if (object@hide < 0.6 | object@hide > 1) {
+    invalids[3] <- "hide must be in [0.6, 1]."
+  }
+  
+  if (length(invalids > 0)) {
+    stop(invalids)
+  }
+  TRUE
+})
+
+new("mouse", weight = 0.2, name = "")      # how to make it pretty?
+
+setValidity("rabbit", 
+            method = function(object) {
+              invalids <- character()
+              if (object@name == "") {
+                invalids[1] <- "animals need a 'name'."
+              } 
+              if (object@weight < 1 | object@weight > 5) {
+                invalids[2] <- "weight must be in [1, 5]."
+              }
+              if (object@hide < 0.3 | object@hide > 0.8) {
+                invalids[3] <- "hide must be in [0.3, 0.8]."
+              }
+              
+              if (length(invalids > 0)) {
+                stop(invalids)
+              }
+              TRUE
+            })
+
+setValidity("deer", 
+            method = function(object) {
+              invalids <- character()
+              if (object@name == "") {
+                invalids[1] <- "animals need a 'name'."
+              } 
+              if (object@weight < 15 | object@weight > 30) {
+                invalids[2] <- "weight must be in [15, 30]."
+              }
+              if (object@hide < 0.2 | object@hide > 0.7) {
+                invalids[3] <- "hide must be in [0.2, 0.7]."
+              }
+              
+              if (length(invalids > 0)) {
+                stop(invalids)
+              }
+              TRUE
+            })
+
+setValidity("hawk", 
+            method = function(object) {
+              invalids <- character()
+              if (object@name == "") {
+                invalids[1] <- "animals need a 'name'."
+              } 
+              if (object@weight < 3 | object@weight > 8) {
+                invalids[2] <- "weight must be in [3, 8]."
+              }
+              if (object@seek < 0.6 | object@seek > 1) {
+                invalids[3] <- "seek must be in [0.6, 1]."
+              }
+              
+              if (length(invalids > 0)) {
+                stop(invalids)
+              }
+              TRUE
+            })
+
+setValidity("lynx", 
+            method = function(object) {
+              invalids <- character()
+              if (object@name == "") {
+                invalids[1] <- "animals need a 'name'."
+              } 
+              if (object@weight < 20 | object@weight > 60) {
+                invalids[2] <- "weight must be in [20, 60]."
+              }
+              if (object@seek < 0.5 | object@seek > 0.9) {
+                invalids[3] <- "seek must be in [0.5, 0.9]."
+              }
+              
+              if (length(invalids > 0)) {
+                stop(invalids)
+              }
+              TRUE
+            })
