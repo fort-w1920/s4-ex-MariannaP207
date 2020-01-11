@@ -1,3 +1,5 @@
+source("s4-animal-sol.R")
+
 deer()
 hawk()
 str(mouse())
@@ -24,3 +26,5 @@ for (animal1 in animals[1:5]) {
     cat(meet(animal1, animal2))
   }
 }
+
+cat(meet(lynx(female = F), lynx()))

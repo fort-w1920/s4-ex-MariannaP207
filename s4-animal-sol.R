@@ -52,24 +52,24 @@ setClass("predator",
 )
 
 
-# write a function that creates all underclasses 
-# based on the received class name, parent class 
+# write a function that creates all underclasses
+# based on the received class name, parent class
 # and checks for validity:
 set_class_animals <- function(class_name,
                               parent_class,
                               min_weight, max_weight,
                               min_param, max_param) {
-  
-  # define which parameter @seek or @hide must be used based on 
+
+  # define which parameter @seek or @hide must be used based on
   # the fact whether the animal is a prey or a predator:
-  param <- ifelse(parent_class == "prey", "hide", "seek") 
+  param <- ifelse(parent_class == "prey", "hide", "seek")
 
   # define class object with the corrsponding parent class:
   setClass(class_name,
     contains = parent_class,
 
-  # validate if the attributes of the created object are correct 
-  # and within the appropriate range:
+    # validate if the attributes of the created object are correct
+    # and within the appropriate range:
     validity = function(object) {
       invalids <- character(0)
 
@@ -124,45 +124,40 @@ set_class_animals("lynx",
 # Write helper (constructor) functions for the preys.
 # If no values provided the functions simulate random values
 # based on the default settings:
-mouse <- function(name = make_name(length = sample(3:10, size = 1)), 
-                  weight = runif(1, 0.5, 1), 
-                  female = TRUE, 
+mouse <- function(name = make_name(length = sample(3:10, size = 1)),
+                  weight = runif(1, 0.5, 1),
+                  female = TRUE,
                   hide = runif(1, 0.6, 1)) {
-
   new("mouse", name = name, weight = weight, female = female, hide = hide)
 }
 
-rabbit <- function(name = make_name(length = sample(3:10, size = 1)), 
-                   weight = runif(1, 1, 5), 
-                   female = TRUE, 
+rabbit <- function(name = make_name(length = sample(3:10, size = 1)),
+                   weight = runif(1, 1, 5),
+                   female = TRUE,
                    hide = runif(1, 0.3, 0.8)) {
-
   new("rabbit", name = name, weight = weight, female = female, hide = hide)
 }
 
-deer <- function(name = make_name(length = sample(3:10, size = 1)), 
-                 weight = runif(1, 15, 30), 
-                 female = TRUE, 
+deer <- function(name = make_name(length = sample(3:10, size = 1)),
+                 weight = runif(1, 15, 30),
+                 female = TRUE,
                  hide = runif(1, 0.2, 0.7)) {
-
   new("deer", name = name, weight = weight, female = female, hide = hide)
 }
 
 
 # helper (constructor) functions for the predators:
-hawk <- function(name = make_name(length = sample(3:10, size = 1)), 
-                 weight = runif(1, 3, 8), 
-                 female = TRUE, 
+hawk <- function(name = make_name(length = sample(3:10, size = 1)),
+                 weight = runif(1, 3, 8),
+                 female = TRUE,
                  seek = runif(1, 0.6, 1)) {
-
   new("hawk", name = name, weight = weight, female = female, seek = seek)
 }
 
-lynx <- function(name = make_name(length = sample(3:10, size = 1)), 
-                 weight = runif(1, 20, 60), 
-                 female = TRUE, 
+lynx <- function(name = make_name(length = sample(3:10, size = 1)),
+                 weight = runif(1, 20, 60),
+                 female = TRUE,
                  seek = runif(1, 0.5, 0.9)) {
-
   new("lynx", name = name, weight = weight, female = female, seek = seek)
 }
 
@@ -173,20 +168,21 @@ lynx <- function(name = make_name(length = sample(3:10, size = 1)),
 ################################################################################
 
 ### Method "show" --------------------------------------------------------------
-setMethod("show", "animal", 
-          function(object) {
-            
+setMethod(
+  "show", "animal",
+  function(object) {
     prey <- is(object)[2] == "prey"
-    
+
     if (prey) param <- "hide" else param <- "seek"
     if (slot(object, "female") == TRUE) sex <- "(f)" else sex <- "(m)"
-    
+
     cat(is(object)[1], " '", object@name, "' ", sex, "\n",
       "   weight:  ", object@weight, "\n",
       "   ", param, ":  ", slot(object, param), "\n",
       sep = ""
-  )
-})
+    )
+  }
+)
 
 
 ### Method "meet" --------------------------------------------------------------
@@ -205,20 +201,16 @@ setGeneric(
 # - sniff each other
 # - make babies
 
-setMethod("meet", 
-          
+setMethod("meet",
   signature = c(animal1 = "prey", animal2 = "prey"),
-  
+
   function(animal1, animal2) {
-    
+
     # same animal
     if (identical(animal1, animal2)) {
-      return(paste0(
-        class(animal1), " '", animal1@name,
-              "' gazes at ", ifelse(animal1@female, "her", "his"), 
-              " reflection in a puddle", "\n"))
+      return(meet_identical(animal1))
     }
-    
+
     # same class but different sex:
     else if (class(animal1) == class(animal2) &
       animal1@female != animal2@female) {
@@ -227,17 +219,17 @@ setMethod("meet",
         " sniff each others' butts ",
         rep(" make sweet, sweet love ", 2)
       ), 1)
-    } 
-    
-    # otherwise:  
+    }
+
+    # otherwise:
     else {
       output_message <- sample(c(
         " ignore each other ",
         " sniff each others' butts "
       ), 1)
     }
-    
-    # output: 
+
+    # output:
     return(paste0(
       class(animal1), " '", animal1@name, "' & ",
       class(animal2), " '", animal2@name, "'", output_message, "\n"
@@ -252,13 +244,14 @@ setMethod("meet",
 # - ignore each other
 # - sniff each other
 
-setMethod("meet", 
-          
-  signature("prey", "predator"), 
+setMethod(
+  "meet",
+
+  signature("prey", "predator"),
 
   function(animal1, animal2) {
-    
-    # depending on the prey's and predator's weight different 
+
+    # depending on the prey's and predator's weight different
     # probability for killing or escaping:
     if (between(animal1@weight, 0.05 * animal2@weight, 0.7 * animal2@weight)) {
       kill_prob <- min(1, max(0, 0.6 + animal2@seek - animal1@hide))
@@ -280,7 +273,9 @@ setMethod("meet",
           class(animal2), " '", animal2@name, "'", "\n"
         ))
       }
-    } else {
+    } 
+    
+    else {
       # otherwise:
       output_message <- sample(c(
         " ignore each other ",
@@ -296,11 +291,12 @@ setMethod("meet",
 
 ## Method "meet" for predator & prey same as for prey & predator
 # call previous method with changed arguments
-setMethod("meet",
-          signature("predator", "prey"),
-          function(animal1, animal2) {
-            callGeneric(animal2, animal1)
-          }
+setMethod(
+  "meet",
+  signature("predator", "prey"),
+  function(animal1, animal2) {
+    callGeneric(animal2, animal1)
+  }
 )
 
 
@@ -311,20 +307,16 @@ setMethod("meet",
 # - ignore each other
 # - sniff each other
 
-setMethod("meet", 
-          
+setMethod("meet",
   signature = c(animal1 = "predator", animal2 = "predator"),
 
   function(animal1, animal2) {
-    
+
     # same animal
     if (identical(animal1, animal2)) {
-      return(paste0
-             (class(animal1), " '", animal1@name, 
-              "' gazes at ", ifelse(animal1@female, "her", "his"),
-              " reflection in a puddle", "\n"))
+      return(meet_identical(animal1))
     }
-    
+
     # same class but different sex:
     else if ((class(animal1) == class(animal2)) &
       (animal1@female != animal2@female)) {
@@ -332,8 +324,8 @@ setMethod("meet",
         " fight for territory ",
         " make sweet, sweet love "
       ), 1)
-    } 
-    
+    }
+
     # otherwise:
     else {
       output_message <- sample(c(
@@ -349,3 +341,11 @@ setMethod("meet",
     ))
   }
 )
+
+meet_identical <- function(object) {
+  paste0(
+           class(object), " '", object@name,
+           "' gazes at ", ifelse(object@female, "her", "his"),
+           " reflection in a puddle", "\n"
+         )
+}
