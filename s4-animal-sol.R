@@ -230,12 +230,10 @@ setMethod("meet",
     }
 
     # output:
-    return(paste0(
-      class(animal1), " '", animal1@name, "' & ",
-      class(animal2), " '", animal2@name, "'", output_message, "\n"
-    ))
+    return(make_output(animal1, animal2, output_message))
   }
 )
+
 
 ## Method "meet" for a prey and a predator
 # four outcomes possible:
@@ -258,34 +256,16 @@ setMethod(
       output_message <- sample(c(
         " kills and eats ",
         " escapes from "
-      ), 1,
-      prob = c(kill_prob, 1 - kill_prob)
-      )
-      if (output_message == " kills and eats ") {
-        return(paste0(
-          class(animal2), " '", animal2@name, "'", output_message,
-          class(animal1), " '", animal1@name, "'", "\n"
-        ))
-      }
-      if (output_message == " escapes from ") {
-        return(paste0(
-          class(animal1), " '", animal1@name, "'", output_message,
-          class(animal2), " '", animal2@name, "'", "\n"
-        ))
-      }
-    } 
+      ), 1, prob = c(kill_prob, 1 - kill_prob))
+    }  
     
     else {
       # otherwise:
       output_message <- sample(c(
         " ignore each other ",
-        " sniff each others' butts  "
-      ), 1)
-      return(paste0(
-        class(animal1), " '", animal1@name, "' & ",
-        class(animal2), " '", animal2@name, "'", output_message, "\n"
-      ))
-    }
+        " sniff each others' butts "
+      ), 1) }
+      return(make_output(animal1, animal2, output_message))
   }
 )
 
@@ -330,22 +310,47 @@ setMethod("meet",
     else {
       output_message <- sample(c(
         " ignore each other ",
-        " sniff each other ",
+        " sniff each others' butts ",
         " fight for territory "
       ), 1)
     }
 
-    return(paste0(
-      class(animal1), " '", animal1@name, "' & ",
-      class(animal2), " '", animal2@name, "'", output_message, "\n"
-    ))
+    return(make_output(animal1, animal2, output_message))
   }
 )
+
+make_output <- function(animal1 , animal2, output_message) {
+  
+  possible_outcomes <- c(" ignore each other ",
+                         " sniff each others' butts ",
+                         " make sweet, sweet love ",
+                         " fight for territory ",
+                         " kills and eats ",
+                         " escapes from ")
+  
+  output_message <- match.arg(output_message, possible_outcomes)
+  
+  output <- switch(output_message,
+                   " kills and eats " = paste0(
+                     class(animal2), " '", animal2@name, "'", output_message,
+                     class(animal1), " '", animal1@name, "'", "\n"
+                   ),
+                   " escapes from " = paste0(
+                     class(animal1), " '", animal1@name, "'", output_message,
+                     class(animal2), " '", animal2@name, "'", "\n"
+                   ),
+                   # default case
+                   paste0(
+                     class(animal1), " '", animal1@name, "' & ",
+                     class(animal2), " '", animal2@name, "'", output_message, "\n"
+                   ))
+  output
+}
+
 
 meet_identical <- function(object) {
   paste0(
            class(object), " '", object@name,
            "' gazes at ", ifelse(object@female, "her", "his"),
-           " reflection in a puddle", "\n"
-         )
+           " reflection in a puddle", "\n")
 }

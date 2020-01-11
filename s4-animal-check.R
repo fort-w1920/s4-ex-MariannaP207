@@ -27,4 +27,3 @@ for (animal1 in animals[1:5]) {
   }
 }
 
-cat(meet(lynx(female = F), lynx()))
